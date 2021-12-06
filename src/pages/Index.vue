@@ -44,43 +44,48 @@ export default defineComponent({
     const flipOnClickHandler = ({ id, pair }) => {
       const index = imageMap.value[id]
 
-      thereIsCard(index, pair)
+      if (indexCard.value.length === 1) {
+        setTimeout(() => {
+          thereIsCard()
+        }, 1000)
+      }
+      if (indexCard.value.length < 2) {
+        saveCard(index, pair)
+      }
     }
 
-    const thereIsCard = (index, pair) => {
-      if (!isMatchesCard(pair)) {
-        if (indexCard.value.length) {
-          setTimeoutHandler()
-        }
-      } else {
-        alert('Good!')
+    const thereIsCard = () => {
+      if (isMatchesCard.value) {
+        selectedCard.value = {}
+        return
       }
-      saveCard(index, pair)
+      indexCard.value.forEach(i => {
+        imagesList.value[i].flipped = false
+        selectedCard.value = {}
+      })
     }
 
     const indexCard = computed(() => {
       return Object.keys(selectedCard.value)
     })
 
-    const setTimeoutHandler = (timer = 1000) => {
-      setTimeout(() => {
-        indexCard.value.forEach(index => {
-          imagesList.value[index].flipped = false
-          selectedCard.value = {}
-        })
-      }, timer)
-    }
-
     const saveCard = (index, pair) => {
-      if (indexCard.value.length < 2) {
-        imagesList.value[index].flipped = true
-      }
+      imagesList.value[index].flipped = true
       selectedCard.value[index] = pair
     }
+    //
+    const isMatchesCard = computed(() => {
+      let cardPair = null
 
-    const isMatchesCard = (pair) => {
-      return Object.values(selectedCard.value).includes(pair)
-    }
+      for (const index in selectedCard.value) {
+        if (cardPair === selectedCard.value[index]) {
+          return true
+        }
+        cardPair = selectedCard.value[index]
+      }
+
+      return false
+    })
 
     onMounted(() => {
       imagesList.value.sort(() => Math.random() - 0.5)
