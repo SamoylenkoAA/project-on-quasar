@@ -36,7 +36,9 @@ export default {
 
     const handlerEmit = () => {
       const { emit } = context
-      emit('click', props.image)
+      if (!props.image.flipped) {
+        emit('click', props.image)
+      }
     }
     return {
       handlerEmit,
