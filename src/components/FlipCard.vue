@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, toRefs } from 'vue'
 
 export default {
   name: 'FlipCard',
@@ -28,16 +28,18 @@ export default {
     }
   },
   setup (props, context) {
-    const flipInTheClasses = computed(() => props.image.flipped ? 'flip-container' : 'flip-container flipped')
+    const { image } = toRefs(props)
+
+    const flipInTheClasses = computed(() => image.value.flipped ? 'flip-container' : 'flip-container flipped')
 
     const getImage = computed(() => {
-      return require(`../assets/${props.image.img}`)
+      return require(`../assets/${image.value.img}`)
     })
 
     const handlerEmit = () => {
       const { emit } = context
-      if (!props.image.flipped) {
-        emit('click', props.image)
+      if (!image.value.flipped) {
+        emit('click', image.value)
       }
     }
     return {
